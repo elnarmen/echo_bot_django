@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "echobot"
+version = "0.1.0"
+description = ""
+authors = ["Elnar Mengelbaev <elnar_men@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django-tg-bot-framework = {git = "https://gitlab.levelupdev.ru/dvmn-open-source-dev-tools/django_tg_bot_framework.git", rev = "c504a47496823cd7715f8d4d4df9915a48cbb5c3"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
