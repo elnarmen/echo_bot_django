@@ -3,11 +3,10 @@ from tg_api import (
     Message,
     SendMessageRequest,
 )
-from .decorators import redirect_menu_commands
 from apps.tg_bot_conversation.models import conversation_var
 
 
-router = Router(decorators=[redirect_menu_commands])
+router = Router()
 
 
 @router.register('/start/')
@@ -32,6 +31,8 @@ class EchoBot(InteractiveState):
         ).send()
 
     def react_on_message(self, message: Message) -> BaseState | None:
+        if message.text == '/start':
+            return router.locate('/start/')
         SendMessageRequest(
             text=message.text,
             chat_id=conversation_var.get().tg_chat_id,

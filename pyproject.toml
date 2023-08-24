@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-django-tg-bot-framework = {git = "https://github.com/elnarmen/django_tg_bot_framework"}
+django-tg-bot-framework = {git = "https://gitlab.levelupdev.ru/dvmn-open-source-dev-tools/django_tg_bot_framework.git"}
 python-dotenv = "^1.0.0"
 psycopg2-binary = "^2.9.7"
 
