@@ -2,59 +2,37 @@ from django_tg_bot_framework import BaseState, Router, InteractiveState
 from tg_api import (
     Message,
     SendMessageRequest,
-    tg_types,
-    SyncTgClient,
-    raise_for_tg_response_status,
 )
-
-from .models import conversation_var
-
-
-router = Router()
+from .decorators import redirect_menu_commands
+from apps.tg_bot_conversation.models import conversation_var
 
 
-@router.register('/')
-class RootState(InteractiveState):
-    def enter_state(self) -> BaseState | None:
-        SendMessageRequest(
-            text='Вы перешли в состояние RootState `/`.',
-            chat_id=conversation_var.get().tg_chat_id,
-        ).send()
-
-    def react_on_message(self, message: Message) -> BaseState | None:
-        echo_text = message.text or '`пусто`'
-        SendMessageRequest(
-            text=f'Эхо: {echo_text}',
-            chat_id=message.chat.id,
-        ).send()
-
-    def react_on_inline_keyboard(self, message: Message, pressed_button_payload: str) -> BaseState | None:
-        echo_text = pressed_button_payload or '`пусто`'
-        SendMessageRequest(
-            text=f'Эхо: {echo_text}',
-            chat_id=message.chat.id,
-        ).send()
+router = Router(decorators=[redirect_menu_commands])
 
 
 @router.register('/start/')
-class StartCommandState(InteractiveState):
+class FirstState(InteractiveState):
     def enter_state(self) -> BaseState | None:
         SendMessageRequest(
-            text='Вы ввели команду `/start`. Пришлите любое сообщение, чтобы попасть в состояния RootState `/`.',
+            text='''Вы находитесь в стейте FirstState. 
+Напишите что нибудь, чтобыперейти в EchoBot.''',
             chat_id=conversation_var.get().tg_chat_id,
         ).send()
 
     def react_on_message(self, message: Message) -> BaseState | None:
-        echo_text = message.text or '`пусто`'
-        SendMessageRequest(
-            text=f'Состояние:\b{self.state_class_locator}\nЭхо:\n{echo_text}',
-            chat_id=message.chat.id,
-        ).send()
-        return router.locate('/')
+        return router.locate('/second/')
 
-    def react_on_inline_keyboard(self, message: Message, pressed_button_payload: str) -> BaseState | None:
-        echo_text = pressed_button_payload or '`пусто`'
+
+@router.register('/second/')
+class EchoBot(InteractiveState):
+    def enter_state(self) -> BaseState | None:
         SendMessageRequest(
-            text=f'Состояние:\b{self.state_class_locator}\nЭхо:\n{echo_text}',
-            chat_id=message.chat.id,
+            text=f'Вы перешли в эхо бота. Пишите',
+            chat_id=conversation_var.get().tg_chat_id,
+        ).send()
+
+    def react_on_message(self, message: Message) -> BaseState | None:
+        SendMessageRequest(
+            text=message.text,
+            chat_id=conversation_var.get().tg_chat_id,
         ).send()
